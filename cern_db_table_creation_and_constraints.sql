@@ -52,12 +52,19 @@ CREATE TABLE Professions (
 
 CREATE TABLE Scientists (
 	Id SERIAL PRIMARY KEY,
+	ProfessionId INT REFERENCES Professions(Id) NOT NULL,
 	CountryId INT REFERENCES Countries(Id),
 	HotelId INT REFERENCES Hotels(Id),
 	Name VARCHAR(20) NOT NULL,
 	Surname VARCHAR(20) NOT NULL,
 	Title VARCHAR(10),
 	Gender VARCHAR(1) NOT NULL
+);
+
+CREATE TABLE ScientistResearchPapers (
+	Id SERIAL PRIMARY KEY,
+	ScientistId INT REFERENCES Scientists(Id),
+	ResearchPaperId INT REFERENCES ResearchPapers(Id)
 );
 
 --ADDING CONSTRAINTS
