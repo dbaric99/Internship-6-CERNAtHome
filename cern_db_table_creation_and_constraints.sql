@@ -55,6 +55,7 @@ CREATE TABLE Scientists (
 	ProfessionId INT REFERENCES Professions(Id) NOT NULL,
 	CountryId INT REFERENCES Countries(Id),
 	HotelId INT REFERENCES Hotels(Id),
+	BirthDate DATE,
 	Name VARCHAR(20) NOT NULL,
 	Surname VARCHAR(20) NOT NULL,
 	Title VARCHAR(10),
