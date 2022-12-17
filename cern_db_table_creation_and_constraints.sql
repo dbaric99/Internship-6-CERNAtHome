@@ -73,6 +73,8 @@ ALTER TABLE Scientists
 ADD CONSTRAINT chk_gender
 CHECK (Gender IN ('0', '1', '2', '9'));
 
+--Constraint that checks if the number of scientists staying at a hotel
+--surpases its capacity (doesn't work in postgres)
 ALTER TABLE Scientists
 ADD COLUMN CurrentCapacity INT,
 ADD CONSTRAINT chk_hotel_capacity CHECK (
