@@ -74,14 +74,26 @@ ALTER TABLE Scientists
 ADD CONSTRAINT chk_gender
 CHECK (Gender IN ('0', '1', '2', '9'));
 
---Constraint that checks if the number of scientists staying at a hotel
---surpases its capacity (doesn't work in postgres)
+--Checks if number of scientists staying at a certain hotel is greater than its capacity
+CREATE OR REPLACE FUNCTION check_hotel_capacity(hotel_id INT)
+RETURNS BOOLEAN AS
+$$
+DECLARE
+  total_capacity INT;
+BEGIN
+  SELECT SUM(HotelId) INTO total_capacity FROM Scientists;
+  IF total_capacity > (SELECT Capacity FROM Hotels WHERE Id = hotel_id) THEN
+    RETURN FALSE;
+  ELSE
+    RETURN TRUE;
+  END IF;
+END;
+$$
+LANGUAGE plpgsql;
+
 ALTER TABLE Scientists
-ADD COLUMN CurrentCapacity INT,
-ADD CONSTRAINT chk_hotel_capacity CHECK (
-  (SELECT SUM(HotelId) FROM Scientists) 
-	<= (SELECT Capacity FROM Hotels WHERE Id = HotelId)
-);
+ADD CONSTRAINT chk_hotel_capacity CHECK (check_hotel_capacity(HotelId));
+
 
 
 
