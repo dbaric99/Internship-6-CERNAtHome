@@ -98,8 +98,7 @@ VALUES
 INSERT INTO Professions(Name)
 VALUES
 	('Developer'), ('Physicists'), ('Engineer'), ('Material Scientist')
-	
---Execute these next 2 commands one after another to check the query number 9
+
 INSERT INTO Scientists(ProfessionId, CountryId, HotelId, BirthDate, Name, Surname, Gender)
 VALUES
 	(1, 2, 1, '1950-12-30', 'Bjarne', 'Stroustrup', '1'),
@@ -117,9 +116,6 @@ VALUES
 	(2, 6, 4, '1946-07-05', 'Gerard', 'Hooft', '1'),
 	(2, 7, 3, '1930-12-09', 'Hildebrando', 'Rodrigues', '2'),
 	(2, 14, 3, '1931-08-08', 'Roger', 'Penrose', '1')
-	
-INSERT INTO Scientists(ProfessionId, CountryId, HotelId, BirthDate, Name, Surname, Gender)
-VALUES
 	(3, 3, 5, '1955-06-08', 'Tim', 'Berners-Lee', '1'),
 	(3, 4, 6, '1943-06-23', 'Vint', 'Cerf', '1'),
 	(3, 2, 7, '1958-05-10', 'Ellen', 'Ochoa', '2'),
