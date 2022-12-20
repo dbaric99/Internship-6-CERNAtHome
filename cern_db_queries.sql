@@ -1,5 +1,3 @@
---TODO: add aliases for better table readability
-
 --Query 1: select title, publishing date and all scientists working on a project
 --with scientists being in one cell in format Surname N.
 SELECT rp.Title, rp.PublishDate, 
@@ -14,11 +12,12 @@ GROUP BY rp.Id;
 --with name and ppp of his home country
 SELECT s.Name, s.Surname, 
 	(CASE s.Gender
-	 	WHEN 1 THEN 'Male'
-	 	WHEN 2 THEN 'Female'
-	 	WHEN 9 THEN 'Not applicable'
-	 	WHEN 0 THEN 'Unknown'
-	) AS Gender, c.Name, c.PPP
+	 	WHEN '1' THEN 'Male'
+	 	WHEN '2' THEN 'Female'
+	 	WHEN '9' THEN 'Not applicable'
+	 	WHEN '0' THEN 'Unknown'
+	 	ELSE 'Invalid gender'
+	END) AS Gender, c.Name AS CountryName, CONCAT('$', c.PPP)
 FROM Scientists s
 JOIN Countries c ON s.CountryId = c.Id;
 
@@ -54,14 +53,13 @@ HAVING rp.QuotationsNumber = MAX(rp.QuotationsNumber);
 SELECT c.Name AS Country, r.Title AS FirstPublished
 FROM Countries c
 LEFT JOIN (
-	SELECT s.CountryId, rp.Title, rp.PublishDate
+	SELECT s.CountryId, rp.Title, rp.PublishDate,
+		ROW_NUMBER() OVER (PARTITION BY s.CountryId ORDER BY rp.PublishDate ASC) AS RowNumber
 	FROM Scientists s
 	JOIN ScientistResearchPapers srp ON s.Id = srp.ScientistId
 	JOIN ResearchPapers rp ON srp.ResearchPaperId = rp.Id
-	ORDER BY s.CountryId, rp.PublishDate ASC
-) r ON c.Id = r.CountryId
-GROUP BY c.Name, r.Title
-LIMIT 1;
+) r ON c.Id = r.CountryId AND r.RowNumber = 1
+GROUP BY c.Name, r.Title;
 
 --Query 7: select cities and number of scientists that are staying in them
 SELECT ct.Name AS City, COUNT(s.Id) AS NumOfScientists
@@ -71,7 +69,7 @@ JOIN Scientists s ON s.HotelId = h.Id
 GROUP BY ct.Name;
 
 --Query 8: select average number of quotes by every accelerator
-SELECT a.Label AS Accelerator, AVG(rp.QuotationsNumber) AS AverageQuotations
+SELECT a.Label AS Accelerator, ROUND(AVG(rp.QuotationsNumber), 2) AS AverageQuotations
 FROM Accelerators a
 JOIN AcceleratorProjects ap ON ap.AcceleratorId = a.Id
 JOIN Projects p ON p.Id = ap.ProjectId
@@ -87,13 +85,13 @@ JOIN (
   SELECT s.Id, ((date_part('year', s.BirthDate)::integer - (date_part('year', s.BirthDate)::integer % 10)) / 10) * 10 AS BirthDecade
   FROM Scientists s
 ) AS sc ON s.Id = sc.Id
-GROUP BY p.Name, sq.BirthDecade, s.Gender
+GROUP BY p.Name, sc.BirthDecade, s.Gender
 HAVING COUNT(sc.Id) >= 20
-ORDER BY sc.decade ASC;
+ORDER BY sc.BirthDecade ASC;
 
 --Query 10: select top 10 richest scientists
 SELECT s.Name, s.Surname,
-	(SQRT(rp.QuotationsNumber) / COUNT(srp.ScientistId)) AS Wealth
+	CONCAT('$', (SQRT(rp.QuotationsNumber) / COUNT(srp.ScientistId))) AS Wealth
 FROM Scientists s
 JOIN ScientistResearchPapers srp ON srp.ScientistId = s.Id
 JOIN ResearchPapers rp ON rp.Id = srp.ResearchPaperId

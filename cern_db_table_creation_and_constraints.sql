@@ -7,7 +7,7 @@ CREATE TABLE Accelerators (
 
 CREATE TABLE Projects (
 	Id SERIAL PRIMARY KEY,
-	Name VARCHAR(50) NOT NULL
+	Name VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE AcceleratorProjects (
@@ -19,7 +19,7 @@ CREATE TABLE AcceleratorProjects (
 CREATE TABLE ResearchPapers (
 	Id SERIAL PRIMARY KEY,
 	ProjectId INT REFERENCES Projects(Id) UNIQUE NOT NULL,
-	Title VARCHAR(40) NOT NULL,
+	Title VARCHAR(100) NOT NULL,
 	QuotationsNumber INT,
 	PublishDate DATE
 );
@@ -28,7 +28,7 @@ CREATE TABLE Countries (
 	Id SERIAL PRIMARY KEY,
 	Name VARCHAR(60) UNIQUE NOT NULL,
 	Population BIGINT NOT NULL,
-	PPP FLOAT
+	PPP INT
 );
 
 CREATE TABLE Cities (
@@ -38,6 +38,7 @@ CREATE TABLE Cities (
 	Population BIGINT
 );
 
+--Capacity is in rooms
 CREATE TABLE Hotels (
 	Id SERIAL PRIMARY KEY,
 	CityId INT REFERENCES Cities(Id),
@@ -58,7 +59,6 @@ CREATE TABLE Scientists (
 	BirthDate DATE,
 	Name VARCHAR(20) NOT NULL,
 	Surname VARCHAR(20) NOT NULL,
-	Title VARCHAR(10),
 	Gender VARCHAR(1) NOT NULL
 );
 
@@ -88,8 +88,7 @@ BEGIN
     RETURN TRUE;
   END IF;
 END;
-$$
-LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
 ALTER TABLE Scientists
 ADD CONSTRAINT chk_hotel_capacity CHECK (check_hotel_capacity(HotelId));
